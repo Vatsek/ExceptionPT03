@@ -1,5 +1,7 @@
 package org.example;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -12,7 +14,10 @@ public class Main {
 //        Scanner scanner = new Scanner(System.in);
 //        String input = scanner.nextLine();
 //        System.out.println(data);
-        String input = "Вацек Павел Александрович 24.03.1988 79265974869 M";
+
+
+        String input = "Вацек Павел Александрович 24.03.88 79265974869 F";
+        StringBuilder result = new StringBuilder();
         ArrayList<String> data = new ArrayList<String>(Arrays.asList(input.split(" ")));
         try {
             checkSize(data);
@@ -20,12 +25,31 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
+        try {
+            checkDate(data.get(3));
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            System.out.println(data.get(5));
+            checkGender(data.get(5));
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
 
 
-        SimpleDateFormat format = new SimpleDateFormat("dd.mm.yyyy"); // создаем формат даты
-        Date birthdate;
-        birthdate = format.parse(data.get(3)); // парсим дату в переменную
-        System.out.println(birthdate);
+
+
+
+
+
+
+
+
+
+
+
 
 
     }
@@ -35,4 +59,26 @@ public class Main {
             return true;
         } else throw new RuntimeException("Введено не верное количество параметров");
     }
+
+    public static String checkDate(String dateStr) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        formatter.setLenient(false);
+        try {
+            formatter.parse(dateStr);
+        } catch (ParseException e) {
+            throw new ParseException("Не верный формат даты", e.getErrorOffset());
+        }
+        return dateStr;
+    }
+
+    public static String checkGender(String gender) {
+        if (gender == "M" || gender == "F") {
+            return gender;
+        } else
+            throw new RuntimeException("Не верный формат гендера");
+    }
+
+
+
+
 }
