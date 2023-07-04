@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static javax.swing.UIManager.get;
 
@@ -16,7 +17,7 @@ public class Main {
 //        System.out.println(data);
 
 
-        String input = "Вацек Павел Александрович 24.03.88 79265974869 F";
+        String input = "Вацек Павел Александрович 24.03.88 79265974869 f";
         StringBuilder result = new StringBuilder();
         ArrayList<String> data = new ArrayList<String>(Arrays.asList(input.split(" ")));
         try {
@@ -25,18 +26,40 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
+        try { // проверияем Фамилию
+            result.append(checkName(data.get(0)));
+        } catch (InputMismatchException e) {
+            System.out.println(e.getMessage());
+        }
+        try { // проверияем Имя
+            result.append(checkName(data.get(1)));
+        } catch (InputMismatchException e) {
+            System.out.println(e.getMessage());
+        }
+        try { // проверияем Отчество
+            result.append(checkName(data.get(2)));
+        } catch (InputMismatchException e) {
+            System.out.println(e.getMessage());
+        }
+
         try {
-            checkDate(data.get(3));
+            result.append('<'+(checkDate(data.get(3)))+ '>');
         } catch (ParseException e) {
             System.out.println(e.getMessage());
         }
 
         try {
-            System.out.println(data.get(5));
-            checkGender(data.get(5));
-        } catch (RuntimeException e) {
+            result.append(checkPhoneNum(data.get(4)));
+        } catch (InputMismatchException e) {
             System.out.println(e.getMessage());
         }
+        try {
+            result.append(checkGender(data.get(5)));
+        } catch (InputMismatchException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println(result);
 
 
 
@@ -61,24 +84,28 @@ public class Main {
     }
 
     public static String checkDate(String dateStr) throws ParseException {
-        DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        formatter.setLenient(false);
-        try {
-            formatter.parse(dateStr);
-        } catch (ParseException e) {
-            throw new ParseException("Не верный формат даты", e.getErrorOffset());
-        }
-        return dateStr;
+        if (dateStr.matches("[0-9]{2}.[0-9]{2}.[0-9]{2}")) {
+            return dateStr;
+        } else throw new ParseException("Ошибка ввода даты", 1);
     }
+
 
     public static String checkGender(String gender) {
-        if (gender == "M" || gender == "F") {
+        if (gender.matches("[m,f]")) {
             return gender;
-        } else
-            throw new RuntimeException("Не верный формат гендера");
+        } else throw new InputMismatchException("Не верно введён гендер");
     }
 
+    public static String checkName(String name) {
+        if (Pattern.matches("[а-яА-Я]+", name)) {
+            return name;
+        } else throw new InputMismatchException("Не верно введены ФИО");
+    }
 
-
+    public static String checkPhoneNum(String phone) {
+        if (Pattern.matches("^[0-9]+[0-9]*$", phone)) {
+            return phone;
+        } else throw new InputMismatchException("Не верно введён номер телефона");
+    }
 
 }
