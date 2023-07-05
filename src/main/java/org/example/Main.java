@@ -9,18 +9,20 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 
-
 public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("Введите фамилию, имя, отчество, дату рождения, номер телефона, пол");
-            System.out.println("Дата в формате dd.mm.yy , 'f' или 'M'");
+            System.out.println("Введите фамилию, имя, отчество - (текст через пробел), " +
+                    "дату рождения (в формате dd.mm.yyyy), номер телефона(в формате целого беззнакового числа)," +
+                    " пол (f ли m)");
+
             System.out.println("Что бы закончить, наберите exit");
             String input = scanner.nextLine();
-            if (input != "exit"){
-
+            if (input.equals("exit")) {
+                break;
+            }
 
             StringBuilder result = new StringBuilder();
             ArrayList<String> data = new ArrayList<String>(Arrays.asList(input.split(" ")));
@@ -63,20 +65,9 @@ public class Main {
                 }
                 }
             }
-            else break;
         }
-    }
 
 
-
-
-
-
-
-
-
-
-//    }
 
     public static boolean checkSize(ArrayList<String> data) throws RuntimeException {
         if (data.size() == 6) {
