@@ -8,19 +8,27 @@ import java.io.PrintWriter;
 
 public class MyTest {
     public static void main(String[] args) {
-        try {
-            File file = new File("testF.txt");
 
-            if(!file.exists()) {
+
+    }
+
+    public static void writeToFile(StringBuilder text, String name) {
+        PrintWriter pw = null;
+        try {
+            File file = new File(name);
+
+            if (!file.exists()) {
                 file.createNewFile();
             }
-            PrintWriter pw = new PrintWriter(new FileWriter(file,true));
+            pw = new PrintWriter(new FileWriter(file, true));
 
-            pw.append("test6\n");
-//            pw.append("\n");
+            pw.append("text" + "\n");
             pw.close();
         } catch (IOException e) {
-            System.out.println("Error");
+            System.out.println("Ошибка при работе с файлом");
+        } finally {
+            pw.close();
         }
     }
+
 }

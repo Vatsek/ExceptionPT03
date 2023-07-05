@@ -1,56 +1,82 @@
 package org.example;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static javax.swing.UIManager.get;
+
 
 public class Main {
     public static void main(String[] args) {
 
-        String input = "24.03.88 Вацек m Павел Александрович 79265974869";
-        StringBuilder result = new StringBuilder();
-        ArrayList<String> data = new ArrayList<String>(Arrays.asList(input.split(" ")));
-        try {
-            checkSize(data);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-        try {
-            result.append(checkName(data));
-        } catch (InputMismatchException e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-            result.append(checkDate(data));
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Введите фамилию, имя, отчество, дату рождения, номер телефона, пол");
+            System.out.println("Дата в формате dd.mm.yy , 'f' или 'M'");
+            System.out.println("Что бы закончить, наберите exit");
+            String input = scanner.nextLine();
+            if (input != "exit"){
+
+
+            StringBuilder result = new StringBuilder();
+            ArrayList<String> data = new ArrayList<String>(Arrays.asList(input.split(" ")));
+
+            try {
+                checkSize(data);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            try {
+                result.append(checkName(data));
+            } catch (InputMismatchException e) {
+                System.out.println(e.getMessage());
+            }
+            try {
+                result.append(checkDate(data));
             } catch (ParseException e) {
-            System.out.println(e.getMessage());
+                System.out.println(e.getMessage());
+            }
+            try {
+                result.append((checkPhoneNum(data)));
+            } catch (InputMismatchException e) {
+                System.out.println(e.getMessage());
+            }
+            try {
+                result.append((checkGender(data)));
+            } catch (InputMismatchException e) {
+                System.out.println(e.getMessage());
+            }
+
+
+            ArrayList<String> tmp = new ArrayList<String>(Arrays.asList(result.toString().split(">")));
+            if (tmp.size() == 6) {
+                String fileName = tmp.get(0);
+                fileName = fileName.substring(1, fileName.length());
+                try {
+                    writeToFile(result, fileName);
+                } catch (IOException e) {
+                    e.getMessage();
+                }
+                }
+            }
+            else break;
         }
-        try {
-            result.append((checkPhoneNum(data)));
-        } catch (InputMismatchException e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-            result.append((checkGender(data)));
-        } catch (InputMismatchException e) {
-            System.out.println(e.getMessage());
-        }
-
-
-        System.out.println(result);
-
-
-
-
-
-
-
-
-
-
     }
+
+
+
+
+
+
+
+
+
+
+//    }
 
     public static boolean checkSize(ArrayList<String> data) throws RuntimeException {
         if (data.size() == 6) {
@@ -89,7 +115,7 @@ public class Main {
     public static StringBuilder checkDate(ArrayList<String> data) throws ParseException {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < data.size(); i++) {
-            if (data.get(i).matches("[0-9]{2}.[0-9]{2}.[0-9]{2}")) {
+            if (data.get(i).matches("[0-9]{2}.[0-9]{2}.[0-9]{4}")) {
                 result.append('<' + data.get(i) + '>');
                 data.remove(i);
             }
@@ -117,5 +143,22 @@ public class Main {
             throw new InputMismatchException("Не корректно введены ФИО");
         } else {
         return result; }
+    }
+
+    public static void writeToFile(StringBuilder text, String name) throws IOException {
+        File file = new File(name);
+        PrintWriter pw = new PrintWriter(new FileWriter(file, true));
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            pw.append(text + "\n");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка при работе с файлом");
+        }
+        finally {
+            pw.close();
+        }
     }
 }
